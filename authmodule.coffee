@@ -28,27 +28,23 @@ authmodule.initialize = () ->
 ############################################################
 authmodule.authenticate = (message, signature) ->
     log "authmodule.authenticate"
-    log message
-    log signature
-    log " - _ - "
+    signatureBuffer = Buffer.from(signature, "base64")
+    messageBuffer  = Buffer.from(message, 'utf8')
 
-    signer = crypto.createSign('sha256');
-    signer.update(message);
-    signer.end();
-
-    signature = signer.sign(signingKey)
-    signature_hex = signature.toString('hex')
-
-    verifier = crypto.createVerify('sha256');
-    verifier.update(message);
-    verifier.end();
-
-    verified = verifier.verify(verfificationKey, signature);
-
-    log(JSON.stringify({message: message,signature: signature_hex,verified: verified,}, null, 4));
-
-    log " - _ - "
+    verified = crypto.verify(null, messageBuffer, verfificationKey, signatureBuffer)
+    log "verified is: " + verified
     
+    if !verified then throw new Error("Invalid Signature!")
     return
+
+authmodule.createSignature = (message) ->
+    log "authmodule.createSignature"
+
+    messageBuffer = Buffer.from(message, 'utf8')
+    signature = crypto.sign(null, messageBuffer, signingKey)
+    # log "signature is: " + signature.toString("base64")
+
+    return signature
+
 
 module.exports = authmodule
