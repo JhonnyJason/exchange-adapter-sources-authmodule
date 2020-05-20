@@ -16,7 +16,6 @@ crypto = require("crypto")
 signingKey = ""
 verfificationKey = ""
 
-
 ############################################################
 authmodule.initialize = () ->
     log "authmodule.initialize"
@@ -42,9 +41,7 @@ authmodule.createSignature = (message) ->
 
     messageBuffer = Buffer.from(message, 'utf8')
     signature = crypto.sign(null, messageBuffer, signingKey)
-    # log "signature is: " + signature.toString("base64")
 
-    return signature
-
+    return signature.toString("base64")
 
 module.exports = authmodule
